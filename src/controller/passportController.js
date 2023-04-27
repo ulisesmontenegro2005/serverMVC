@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import service from './../service/service.js';
+import { factoryService } from '../service/factoryService.js';
+const service = factoryService.get();
 
 passport.use('register', new LocalStrategy({ passReqToCallback: true }, async (req, username, password, done) => {
     const { user } = req.body;

@@ -1,4 +1,5 @@
-import service from './../service/service.js'
+import { factoryService } from './../service/factoryService.js';
+const service = factoryService.get()
 
 function requireAuthentication(req, res, next) {
     if (req.isAuthenticated()) {

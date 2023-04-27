@@ -5,10 +5,13 @@ import compression from 'compression';
 import { Server }  from 'socket.io';
 import { createServer } from 'http';
 import config from './config.js';
-import router from './src/router/router.js';
-import service from './src/service/service.js';
+import { factoryService } from './src/service/factoryService.js';
+import sessionRouter from './src/router/sessionRouter.js'
+import productsRouter from './src/router/productsRouter.js'
+import cartRouter from './src/router/cartRouter.js'
 import options from './src/model/db/connection.js'
 
+const service = factoryService.get();
 const app = express();
 options.connect();
 
@@ -29,7 +32,10 @@ app.use(passport.session())
 
 // ROUTER
 
-app.use('/', router);
+app.use('/', sessionRouter);
+app.use('/', productsRouter);
+app.use('/', cartRouter);
+
 app.get("*", (req, res) => {
     res.json(  {"error":`la ruta no existe: ${req.url}`} )
 });
