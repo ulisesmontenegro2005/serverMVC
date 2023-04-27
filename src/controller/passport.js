@@ -3,20 +3,21 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import service from './../service/service.js';
 
 passport.use('register', new LocalStrategy({ passReqToCallback: true }, async (req, username, password, done) => {
-    const { email } = req.body;
+    const { user } = req.body;
 
-    const user = await service.getUser(username);
+    const email = await service.getUser(username);
 
-    if (user) {
+    if (email) {
         return done(null, false, 'That user has already register')
     }
 
-    const newUser = await service.createUser({username,password,email})
+    const newUser = await service.createUser({username,password,user})
 
     done(null, newUser);
 }))
 
 passport.use('login', new LocalStrategy( async (username, password, done) => {
+
     let user = await service.completeUserByUsername(username)
 
     if (!user) {
@@ -25,6 +26,8 @@ passport.use('login', new LocalStrategy( async (username, password, done) => {
 
     const isMatch = await service.comparePassword(password, user.password);
     if (!isMatch) return done(null, false, 'Incorrect password');
+
+    user.username = username
 
     done(null, user)
 }))
@@ -39,7 +42,7 @@ passport.deserializeUser(async (username, done) => {
     done(null, user)
 })
 
-const loginPassport = passport.authenticate('login', { failureRedirect: '/faillogin', successRedirect: '/datos' });
+const loginPassport = passport.authenticate('login', { failureRedirect: '/faillogin', successRedirect: '/products' });
 
 const registerPassport = passport.authenticate('register', { failureRedirect: '/failregister', successRedirect: '/'});
 

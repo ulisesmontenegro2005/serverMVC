@@ -1,21 +1,24 @@
 import express from 'express'
 import session from 'express-session'
-import { engine as exphbs } from 'express-handlebars'
 import passport from 'passport';
+import compression from 'compression';
 import { Server }  from 'socket.io';
 import { createServer } from 'http';
 import config from './config.js';
-import router from './router/router.js';
-import service from './service/service.js';
+import router from './src/router/router.js';
+import service from './src/service/service.js';
+import options from './src/model/db/connection.js'
 
 const app = express();
+options.connect();
 
+app.use(compression())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./public'));
 app.use(session({
     cookie:{
-        maxAge:60000
+        maxAge:36000000
         },
     secret: 'secret',
     saveUninitialized: true,
@@ -23,13 +26,13 @@ app.use(session({
 }));
 app.use(passport.initialize())
 app.use(passport.session())
-app.engine('.hbs', exphbs({ extname: '.hbs', defaultLayout: 'main.hbs' }))
-app.set('views', './public/views');
-app.set('view engine', '.hbs')
 
 // ROUTER
 
 app.use('/', router);
+app.get("*", (req, res) => {
+    res.json(  {"error":`la ruta no existe: ${req.url}`} )
+});
 
 // SOCKET
 
@@ -49,6 +52,11 @@ io.on('connection', async socket => {
         socket.on('update-chat', async data => {
             await service.addMsg(data)
             io.sockets.emit('messages', await service.getMsgs())
+        })
+
+        socket.emit('cart')
+        socket.on('update-cart', async () => {
+            io.sockets.emit('cart')
         })
 })
 

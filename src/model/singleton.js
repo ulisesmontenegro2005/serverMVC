@@ -2,7 +2,7 @@ function singleton (user) {
     if (user.timestamp) {
         return user
     } else {
-        user.timestamp = Date.now()
+        user.timestamp = new Date().toLocaleString()
     }
     return user
 }

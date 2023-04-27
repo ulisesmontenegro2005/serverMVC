@@ -4,30 +4,20 @@ function requireAuthentication(req, res, next) {
     if (req.isAuthenticated()) {
         next()
     } else {
-        res.redirect('/login')
+        res.status(403).redirect('/login')
     }
 }
 
 function reqUserAutentication (req, res, next) {
     if (req.user) {
-        return res.redirect('/datos')
+        return res.redirect('/products')
     } else{
         next()
     }
 }
 
-function increaseCounter (req, res, next) {
-    if (!req.session.contador) {
-        req.session.contador = 0
-    }
-
-    req.session.contador++
-
-    next()
-}
-
 async function fetchUser (req, res, next) {
-    if (!req.session.passport.user) {
+    if (!req.user) {
         return res.redirect('/')
     }
 
@@ -41,6 +31,5 @@ async function fetchUser (req, res, next) {
 export default {
     requireAuthentication,
     reqUserAutentication,
-    increaseCounter,
     fetchUser
 };

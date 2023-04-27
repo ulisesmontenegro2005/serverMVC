@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 const { Schema } = mongoose;
 
 const UserSchema = new Schema ({
-    username: {
+    user: {
         type: String,
         required: true
     },
@@ -16,8 +16,12 @@ const UserSchema = new Schema ({
         type: String,
         required: true  
     },
+    cart: {
+        type: Array,
+        required: true
+    },
     timestamp: {
-        type: Number,
+        type: String,
         required: true
     }
 })

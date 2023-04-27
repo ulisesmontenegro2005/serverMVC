@@ -1,18 +1,6 @@
 import bcrypt from 'bcrypt';
-import factoryDAO from '../model/DAOs/factoryDAO.js';
+import factoryDAO from './../model/DAOs/factoryDAO.js';
 const DAOs = factoryDAO.get();
-
-const infoObject = async () => {
-    return {
-        argsEntrada: process.argv,
-        sistema: process.platform,
-        node: process.versions.node,
-        memoriaReservada: process.memoryUsage().rss,
-        pathExec: process.execPath,
-        pid: process.pid,
-        carpetaProyecto: process.argv[1].split('/')[6]
-    }
-}
 
 // USER FUNCTIONS
 
@@ -46,21 +34,44 @@ const addMsg = async (msg) => {
 // PRODUCT FUNCTIONS
 
 const getProducts = async () => {
-    return DAOs.getProducts()
+    return await DAOs.getProducts()
 }
 
-const addProduct = async (prod) => {
-    await DAOs.addProductMongo(prod)
+const getProductByCode = async (code) => {
+    return await DAOs.getProductByCode(code)
+}
+
+// CART FUNCTIONS
+
+const getProductsCartService = async (username) => {
+    return await DAOs.getProductsCart(username)
+}
+
+const addProductCartService = async (code, user) => {
+    await DAOs.addProductCart(code, user)
+}
+
+const deleteProductCartService = async (code, user) => {
+    await DAOs.deleteProductCart(code, user)
+}
+
+// ORDER FUNCTION
+
+const order = async (user) => {
+    await DAOs.makeOrder(user)
 }
 
 export default {
-    infoObject,
+    order,
+    getProductByCode,
+    getProductsCartService,
+    deleteProductCartService,
+    addProductCartService,
     getUser,
     createUser,
     comparePassword,
     completeUserByUsername,
     getMsgs,
     addMsg,
-    getProducts,
-    addProduct
+    getProducts
 }
